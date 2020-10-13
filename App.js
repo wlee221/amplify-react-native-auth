@@ -32,56 +32,6 @@ export default function App() {
     };
   };
 
-  const inputJSX = () => {
-    const username = (
-      <TextInput
-        key="username"
-        style={styles.input}
-        autoCapitalize="none"
-        placeholder="username"
-        name="username"
-        onChangeText={onChangeText("username")}
-      ></TextInput>
-    );
-    const email = (
-      <TextInput
-        key="email"
-        style={styles.input}
-        autoCapitalize="none"
-        placeholder="email"
-        name="email"
-        onChangeText={onChangeText("email")}
-      ></TextInput>
-    );
-    const password = (
-      <TextInput
-        key="password"
-        style={styles.input}
-        autoCapitalize="none"
-        placeholder="password"
-        name="password"
-        secureTextEntry
-        onChangeText={onChangeText("password")}
-      ></TextInput>
-    );
-    const code = (
-      <TextInput
-        key="code"
-        style={styles.input}
-        autoCapitalize="none"
-        placeholder="code"
-        name="code"
-        secureTextEntry
-        onChangeText={onChangeText("code")}
-      ></TextInput>
-    );
-    if (appState === APP_STATE.SIGN_IN) return [username, password];
-    else if (appState === APP_STATE.SIGN_UP) return [username, email, password];
-    else if (appState === APP_STATE.CONFIRM_SIGNUP) return [username, code];
-    else if (appState === APP_STATE.FORGOT_PASSWORD) return [username];
-    else if (appState === APP_STATE.FORGOT_PASSWORD_SUBMIT) return [username, password, code];
-  };
-
   const signUp = async () => {
     const { username, email, password } = formData;
     await Auth.signUp({ username, password, attributes: { email } });
@@ -132,6 +82,56 @@ export default function App() {
         }}
       />
     );
+  };
+
+  const inputJSX = () => {
+    const username = (
+      <TextInput
+        key="username"
+        style={styles.input}
+        autoCapitalize="none"
+        placeholder="username"
+        name="username"
+        onChangeText={onChangeText("username")}
+      ></TextInput>
+    );
+    const email = (
+      <TextInput
+        key="email"
+        style={styles.input}
+        autoCapitalize="none"
+        placeholder="email"
+        name="email"
+        onChangeText={onChangeText("email")}
+      ></TextInput>
+    );
+    const password = (
+      <TextInput
+        key="password"
+        style={styles.input}
+        autoCapitalize="none"
+        placeholder="password"
+        name="password"
+        secureTextEntry
+        onChangeText={onChangeText("password")}
+      ></TextInput>
+    );
+    const code = (
+      <TextInput
+        key="code"
+        style={styles.input}
+        autoCapitalize="none"
+        placeholder="code"
+        name="code"
+        secureTextEntry
+        onChangeText={onChangeText("code")}
+      ></TextInput>
+    );
+    if (appState === APP_STATE.SIGN_IN) return [username, password];
+    else if (appState === APP_STATE.SIGN_UP) return [username, email, password];
+    else if (appState === APP_STATE.CONFIRM_SIGNUP) return [username, code];
+    else if (appState === APP_STATE.FORGOT_PASSWORD) return [username];
+    else if (appState === APP_STATE.FORGOT_PASSWORD_SUBMIT) return [username, password, code];
   };
 
   const signInJSX = () => {
