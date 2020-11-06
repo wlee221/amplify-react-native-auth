@@ -1,10 +1,16 @@
 {
   "auth": {
-    "rnamplify22483440": {
+    "amplifyreactnativeau2f50681b": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "customAuth": false
+    }
+  },
+  "storage": {
+    "s3862fc65c": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation"
     }
   }
 }

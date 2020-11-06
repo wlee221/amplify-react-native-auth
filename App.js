@@ -2,10 +2,10 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { StyleSheet, Text, Button, TextInput, SafeAreaView } from "react-native";
 
-import Amplify, { Auth, Logger } from "aws-amplify";
+import Amplify, { Auth, Storage } from "aws-amplify";
 import config from "./aws-exports";
 Amplify.configure(config);
-Logger.LOG_LEVEL = "DEBUG";
+// Logger.LOG_LEVEL = 'DEBUG';
 
 const APP_STATE = {
   SIGN_UP: "SIGN_UP",
@@ -71,6 +71,20 @@ export default function App() {
     await Auth.forgotPasswordSubmit(username, code, password);
     setformData(initialformData);
     setAppState(APP_STATE.SIGN_IN);
+  };
+
+  const listFiles = async () => {
+    Storage.list("").then(console.log).catch(console.error);
+  };
+
+  const uploadFile = async () => {
+    Storage.put("test.txt", "Hello")
+      .then((result) => console.log(result)) // {key: "test.txt"}
+      .catch((err) => console.log(err));
+  };
+
+  const getFile = async () => {
+    Storage.get("mlh.pdf").then(console.log).catch(console.error);
   };
 
   const backButton = () => {
@@ -188,6 +202,10 @@ export default function App() {
     return (
       <>
         <Text>You are signed in!</Text>
+        <Button title="List Files" onPress={listFiles}></Button>
+        <Button title="Upload File" onPress={uploadFile}></Button>
+        <Button title="Get File" onPress={getFile}></Button>
+        <Text style={{ marginTop: 10, marginBottom: 10, color: "grey" }}>─────────────────</Text>
         <Button title="Sign Out" onPress={signOut} />
       </>
     );
