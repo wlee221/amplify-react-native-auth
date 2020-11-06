@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, Button, TextInput, SafeAreaView } from "react-native";
 
 import { Amplify } from "@aws-amplify/core";
@@ -30,6 +30,14 @@ const filename = "test.txt";
 export default function App() {
   const [formData, setformData] = useState(initialformData);
   const [appState, setAppState] = useState(APP_STATE.SIGN_IN);
+  useEffect(() => {
+    Auth.currentAuthenticatedUser()
+      .then(() => {
+        setAppState(APP_STATE.SIGNED_IN);
+      })
+      .catch(() => {});
+  }, []); // logout at the start
+
   const onChangeText = (name) => {
     return (text) => {
       setformData({ ...formData, [name]: text });
@@ -143,13 +151,16 @@ export default function App() {
         <Text style={styles.textHeader}>Sign In</Text>
         {inputJSX()}
         <Button title="Sign In" onPress={signIn} />
-        <Text style={{ marginTop: 10, marginBottom: 10, color: "grey" }}>─────── Or ───────</Text>
         <Button
           title="Sign Up"
           onPress={() => {
             setAppState(APP_STATE.SIGN_UP);
           }}
         />
+        <Text style={{ marginTop: 10, marginBottom: 10, color: "grey" }}>─────── Or ───────</Text>
+        <Button title="List Files" onPress={listFiles}></Button>
+        <Button title="Upload File" onPress={uploadFile}></Button>
+        <Button title="Get File" onPress={getFile}></Button>
       </>
     );
   };
@@ -183,11 +194,11 @@ export default function App() {
     if (appState !== APP_STATE.SIGNED_IN) return undefined;
     return (
       <>
-        <Text>You are signed in!</Text>
+        <Text>You are now authorized!</Text>
         <Button title="List Files" onPress={listFiles}></Button>
         <Button title="Upload File" onPress={uploadFile}></Button>
         <Button title="Get File" onPress={getFile}></Button>
-        <Text style={{ marginTop: 10, marginBottom: 10, color: "grey" }}>─────────────────</Text>
+        <Text style={{ marginTop: 10, marginBottom: 10, color: "grey" }}>─────── Or ───────</Text>
         <Button title="Sign Out" onPress={signOut} />
       </>
     );
