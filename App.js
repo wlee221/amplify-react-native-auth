@@ -2,17 +2,19 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { StyleSheet, Text, Button, TextInput, SafeAreaView } from "react-native";
 
-import Amplify, { Auth, Storage } from "aws-amplify";
+import { Amplify } from "@aws-amplify/core";
+import { Auth } from "@aws-amplify/auth";
+import { Storage } from "@aws-amplify/storage";
+
 import config from "./aws-exports";
 Amplify.configure(config);
-// Logger.LOG_LEVEL = 'DEBUG';
+Auth.configure(config);
+Storage.configure(config);
 
 const APP_STATE = {
   SIGN_UP: "SIGN_UP",
   CONFIRM_SIGNUP: "CONFIRM_SIGNUP",
   SIGN_IN: "SIGN_IN",
-  FORGOT_PASSWORD: "FORGOT_PASSWORD",
-  FORGOT_PASSWORD_SUBMIT: "FORGOT_PASSWORD_SUBMIT",
   SIGNED_IN: "SIGNED_IN",
 };
 
@@ -22,6 +24,8 @@ const initialformData = {
   password: "",
   code: "",
 };
+
+const filename = "test.txt";
 
 export default function App() {
   const [formData, setformData] = useState(initialformData);
@@ -59,32 +63,18 @@ export default function App() {
     setAppState(APP_STATE.SIGN_IN);
   };
 
-  const forgotPassword = async () => {
-    const { username } = formData;
-    await Auth.forgotPassword(username);
-    setformData(initialformData);
-    setAppState(APP_STATE.FORGOT_PASSWORD_SUBMIT);
-  };
-
-  const forgotSubmitPassword = async () => {
-    const { username, code, password } = formData;
-    await Auth.forgotPasswordSubmit(username, code, password);
-    setformData(initialformData);
-    setAppState(APP_STATE.SIGN_IN);
-  };
-
   const listFiles = async () => {
     Storage.list("").then(console.log).catch(console.error);
   };
 
   const uploadFile = async () => {
-    Storage.put("test.txt", "Hello")
+    Storage.put(filename, "Hello")
       .then((result) => console.log(result)) // {key: "test.txt"}
       .catch((err) => console.log(err));
   };
 
   const getFile = async () => {
-    Storage.get("mlh.pdf").then(console.log).catch(console.error);
+    Storage.get(filename).then(console.log).catch(console.error);
   };
 
   const backButton = () => {
@@ -144,8 +134,6 @@ export default function App() {
     if (appState === APP_STATE.SIGN_IN) return [username, password];
     else if (appState === APP_STATE.SIGN_UP) return [username, email, password];
     else if (appState === APP_STATE.CONFIRM_SIGNUP) return [username, code];
-    else if (appState === APP_STATE.FORGOT_PASSWORD) return [username];
-    else if (appState === APP_STATE.FORGOT_PASSWORD_SUBMIT) return [username, password, code];
   };
 
   const signInJSX = () => {
@@ -160,12 +148,6 @@ export default function App() {
           title="Sign Up"
           onPress={() => {
             setAppState(APP_STATE.SIGN_UP);
-          }}
-        />
-        <Button
-          title="Forgot Password"
-          onPress={() => {
-            setAppState(APP_STATE.FORGOT_PASSWORD);
           }}
         />
       </>
@@ -211,39 +193,12 @@ export default function App() {
     );
   };
 
-  const forgotPasswordJSX = () => {
-    if (appState !== APP_STATE.FORGOT_PASSWORD) return undefined;
-    return (
-      <>
-        <Text style={styles.textHeader}>Reset Password</Text>
-        {inputJSX()}
-        <Button title="Reset Password" onPress={() => forgotPassword()} />
-        {backButton()}
-      </>
-    );
-  };
-
-  const forgotSubmitPasswordJSX = () => {
-    if (appState !== APP_STATE.FORGOT_PASSWORD_SUBMIT) return undefined;
-    return (
-      <>
-        <Text style={styles.textHeader}>Reset password </Text>
-        <Text style={{ padding: 10 }}>Please enter a new password with the confirmation code sent to your email.</Text>
-        {inputJSX()}
-        <Button title="Change Password" onPress={() => forgotSubmitPassword()} />
-        {backButton()}
-      </>
-    );
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       {signInJSX()}
       {signUpJSX()}
       {confirmSignUpJSX()}
       {signedInJSX()}
-      {forgotPasswordJSX()}
-      {forgotSubmitPasswordJSX()}
       <StatusBar style="auto" />
     </SafeAreaView>
   );
